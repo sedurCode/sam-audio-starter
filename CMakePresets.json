@@ -1,0 +1,53 @@
+{
+  "version": 3,
+  "cmakeMinimumRequired": { "major": 3, "minor": 20, "patch": 0 },
+  "configurePresets": [
+    {
+      "name": "base",
+      "hidden": true,
+      "generator": "Ninja",
+      "toolchainFile": "${sourceDir}/cmake/cces-arm-toolchain.cmake",
+      "cacheVariables": {
+        "CCES_ROOT": "C:/Analog Devices/CrossCore Embedded Studio 2.11.1"
+      }
+    },
+    {
+      "name": "cces283",
+      "hidden": true,
+      "inherits": "base",
+      "cacheVariables": {
+        "CCES_ROOT": "C:/Analog Devices/CrossCore Embedded Studio 2.8.3"
+      }
+    },
+    {
+      "name": "debug",
+      "inherits": "base",
+      "binaryDir": "${sourceDir}/out/debug",
+      "cacheVariables": { "CMAKE_BUILD_TYPE": "Debug" }
+    },
+    {
+      "name": "release",
+      "inherits": "base",
+      "binaryDir": "${sourceDir}/out/release",
+      "cacheVariables": { "CMAKE_BUILD_TYPE": "Release" }
+    },
+    {
+      "name": "debug-283",
+      "inherits": "cces283",
+      "binaryDir": "${sourceDir}/out/debug-283",
+      "cacheVariables": { "CMAKE_BUILD_TYPE": "Debug" }
+    },
+    {
+      "name": "release-283",
+      "inherits": "cces283",
+      "binaryDir": "${sourceDir}/out/release-283",
+      "cacheVariables": { "CMAKE_BUILD_TYPE": "Release" }
+    }
+  ],
+  "buildPresets": [
+    { "name": "debug",   "configurePreset": "debug" },
+    { "name": "release", "configurePreset": "release" },
+    { "name": "debug-283",   "configurePreset": "debug-283" },
+    { "name": "release-283", "configurePreset": "release-283" }
+  ]
+}

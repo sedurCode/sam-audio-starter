@@ -1,0 +1,15 @@
+{
+  "lldb-dap.captureSessionLogs": true,
+  "lldb-dap.commandEscapePrefix": "`",
+  "debug.disassemblyView.showSourceCode": true,
+  "debug.disassemblyView.showInstructionPointer": true,
+  "debug.disassemblyView.showAddress": true,
+  "debug.disassemblyView.showCodeBytes": true,
+  "debug.showInlineBreakpointCandidates": true,
+  "sharc-plus.debugProgram": "out/debug/SAM-Audio-Starter-SHARC0.dxe",
+  "sharc-plus.debugProgramCore1": "out/debug/SAM-Audio-Starter-SHARC0.dxe",
+  "sharc-plus.debugProgramCore2": "out/debug/SAM-Audio-Starter-SHARC1.dxe",
+  "sharc-plus.debugProgramA5": "out/debug/SAM-Audio-Starter-ARM.exe",
+  "sharc-plus.toolchain": "/home/sedur/git/sharc-plus-toolchain",
+  "cmake.configureOnOpen": false
+}

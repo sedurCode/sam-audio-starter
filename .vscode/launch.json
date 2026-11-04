@@ -1,0 +1,569 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "SHARC+ SC589 core 1 (ICE-1000, load and debug)",
+      "type": "lldb-dap",
+      "request": "attach",
+      "debugAdapterExecutable": "${config:sharc-plus.toolchain}/target/release/sharc-lldb-dap",
+      "initCommands": [
+        "settings set plugin.process.gdb-remote.packet-timeout 10",
+        "settings set target.inline-breakpoint-strategy always"
+      ],
+      "sourcePath": "${workspaceFolder}",
+      "debuggerRoot": "${workspaceFolder}",
+      "enableAutoVariableSummaries": true,
+      "enableSyntheticChildDebugging": true,
+      "program": "${workspaceFolder}/${config:sharc-plus.debugProgram}",
+      "gdb-remote-hostname": "127.0.0.1",
+      "gdb-remote-port": 3334,
+      "preLaunchTask": "SHARC+: prepare SC589 core 1",
+      "postDebugTask": "SHARC+: stop OpenOCD",
+      "stopOnEntry": true,
+      "commandEscapePrefix": "`",
+      "sourceMap": [
+        [
+          "D:/SEDAudio/NUPC-ARM/SC589",
+          "${workspaceFolder}"
+        ],
+        [
+          "D:\\SEDAudio\\NUPC-ARM\\SC589",
+          "${workspaceFolder}"
+        ]
+      ]
+    },
+    {
+      "name": "SHARC+ SC589 core 2 (ICE-1000, load and debug)",
+      "type": "lldb-dap",
+      "request": "attach",
+      "debugAdapterExecutable": "${config:sharc-plus.toolchain}/target/release/sharc-lldb-dap",
+      "initCommands": [
+        "settings set plugin.process.gdb-remote.packet-timeout 10",
+        "settings set target.inline-breakpoint-strategy always"
+      ],
+      "sourcePath": "${workspaceFolder}",
+      "debuggerRoot": "${workspaceFolder}",
+      "enableAutoVariableSummaries": true,
+      "enableSyntheticChildDebugging": true,
+      "program": "${workspaceFolder}/${config:sharc-plus.debugProgram}",
+      "gdb-remote-hostname": "127.0.0.1",
+      "gdb-remote-port": 3335,
+      "preLaunchTask": "SHARC+: prepare SC589 core 2",
+      "postDebugTask": "SHARC+: stop OpenOCD",
+      "stopOnEntry": true,
+      "commandEscapePrefix": "`",
+      "sourceMap": [
+        [
+          "D:/SEDAudio/NUPC-ARM/SC589",
+          "${workspaceFolder}"
+        ],
+        [
+          "D:\\SEDAudio\\NUPC-ARM\\SC589",
+          "${workspaceFolder}"
+        ]
+      ]
+    },
+    {
+      "name": "SHARC+ SC589 core 1 (ICE-1000, attach: no reset, no load)",
+      "type": "lldb-dap",
+      "request": "attach",
+      "debugAdapterExecutable": "${config:sharc-plus.toolchain}/target/release/sharc-lldb-dap",
+      "initCommands": [
+        "settings set plugin.process.gdb-remote.packet-timeout 10",
+        "settings set target.inline-breakpoint-strategy always"
+      ],
+      "sourcePath": "${workspaceFolder}",
+      "debuggerRoot": "${workspaceFolder}",
+      "enableAutoVariableSummaries": true,
+      "enableSyntheticChildDebugging": true,
+      "program": "${workspaceFolder}/${config:sharc-plus.debugProgram}",
+      "gdb-remote-hostname": "127.0.0.1",
+      "gdb-remote-port": 3334,
+      "preLaunchTask": "SHARC+: attach SC589",
+      "postDebugTask": "SHARC+: stop OpenOCD",
+      "stopOnEntry": false,
+      "commandEscapePrefix": "`",
+      "sharcCore": 1,
+      "sharcTclPort": 6666,
+      "sourceMap": [
+        [
+          "D:/SEDAudio/NUPC-ARM/SC589",
+          "${workspaceFolder}"
+        ],
+        [
+          "D:\\SEDAudio\\NUPC-ARM\\SC589",
+          "${workspaceFolder}"
+        ]
+      ]
+    },
+    {
+      "name": "SHARC+ SC589 core 2 (ICE-1000, attach: no reset, no load)",
+      "type": "lldb-dap",
+      "request": "attach",
+      "debugAdapterExecutable": "${config:sharc-plus.toolchain}/target/release/sharc-lldb-dap",
+      "initCommands": [
+        "settings set plugin.process.gdb-remote.packet-timeout 10",
+        "settings set target.inline-breakpoint-strategy always"
+      ],
+      "sourcePath": "${workspaceFolder}",
+      "debuggerRoot": "${workspaceFolder}",
+      "enableAutoVariableSummaries": true,
+      "enableSyntheticChildDebugging": true,
+      "program": "${workspaceFolder}/${config:sharc-plus.debugProgram}",
+      "gdb-remote-hostname": "127.0.0.1",
+      "gdb-remote-port": 3335,
+      "preLaunchTask": "SHARC+: attach SC589",
+      "postDebugTask": "SHARC+: stop OpenOCD",
+      "stopOnEntry": false,
+      "commandEscapePrefix": "`",
+      "sharcCore": 2,
+      "sharcTclPort": 6666,
+      "sourceMap": [
+        [
+          "D:/SEDAudio/NUPC-ARM/SC589",
+          "${workspaceFolder}"
+        ],
+        [
+          "D:\\SEDAudio\\NUPC-ARM\\SC589",
+          "${workspaceFolder}"
+        ]
+      ]
+    },
+    {
+      "name": "SHARC+ SC589 core 1 (external OpenOCD, load and debug)",
+      "type": "lldb-dap",
+      "request": "attach",
+      "debugAdapterExecutable": "${config:sharc-plus.toolchain}/target/release/sharc-lldb-dap",
+      "initCommands": [
+        "settings set plugin.process.gdb-remote.packet-timeout 10",
+        "settings set target.inline-breakpoint-strategy always"
+      ],
+      "sourcePath": "${workspaceFolder}",
+      "debuggerRoot": "${workspaceFolder}",
+      "enableAutoVariableSummaries": true,
+      "enableSyntheticChildDebugging": true,
+      "program": "${workspaceFolder}/${config:sharc-plus.debugProgram}",
+      "gdb-remote-hostname": "127.0.0.1",
+      "gdb-remote-port": 3334,
+      "preLaunchTask": "SHARC+: prepare SC589 core 1 (external OpenOCD)",
+      "stopOnEntry": true,
+      "commandEscapePrefix": "`",
+      "sourceMap": [
+        [
+          "D:/SEDAudio/NUPC-ARM/SC589",
+          "${workspaceFolder}"
+        ],
+        [
+          "D:\\SEDAudio\\NUPC-ARM\\SC589",
+          "${workspaceFolder}"
+        ]
+      ]
+    },
+    {
+      "name": "SHARC+ SC589 core 2 (external OpenOCD, load and debug)",
+      "type": "lldb-dap",
+      "request": "attach",
+      "debugAdapterExecutable": "${config:sharc-plus.toolchain}/target/release/sharc-lldb-dap",
+      "initCommands": [
+        "settings set plugin.process.gdb-remote.packet-timeout 10",
+        "settings set target.inline-breakpoint-strategy always"
+      ],
+      "sourcePath": "${workspaceFolder}",
+      "debuggerRoot": "${workspaceFolder}",
+      "enableAutoVariableSummaries": true,
+      "enableSyntheticChildDebugging": true,
+      "program": "${workspaceFolder}/${config:sharc-plus.debugProgram}",
+      "gdb-remote-hostname": "127.0.0.1",
+      "gdb-remote-port": 3335,
+      "preLaunchTask": "SHARC+: prepare SC589 core 2 (external OpenOCD)",
+      "stopOnEntry": true,
+      "commandEscapePrefix": "`",
+      "sourceMap": [
+        [
+          "D:/SEDAudio/NUPC-ARM/SC589",
+          "${workspaceFolder}"
+        ],
+        [
+          "D:\\SEDAudio\\NUPC-ARM\\SC589",
+          "${workspaceFolder}"
+        ]
+      ]
+    },
+    {
+      "name": "SHARC+ SC589 core 1 (external OpenOCD, attach: no reset, no load)",
+      "type": "lldb-dap",
+      "request": "attach",
+      "debugAdapterExecutable": "${config:sharc-plus.toolchain}/target/release/sharc-lldb-dap",
+      "initCommands": [
+        "settings set plugin.process.gdb-remote.packet-timeout 10",
+        "settings set target.inline-breakpoint-strategy always"
+      ],
+      "sourcePath": "${workspaceFolder}",
+      "debuggerRoot": "${workspaceFolder}",
+      "enableAutoVariableSummaries": true,
+      "enableSyntheticChildDebugging": true,
+      "program": "${workspaceFolder}/${config:sharc-plus.debugProgram}",
+      "gdb-remote-hostname": "127.0.0.1",
+      "gdb-remote-port": 3334,
+      "preLaunchTask": "SHARC+: attach SC589 (external OpenOCD)",
+      "stopOnEntry": false,
+      "commandEscapePrefix": "`",
+      "sharcCore": 1,
+      "sharcTclPort": 6666,
+      "sourceMap": [
+        [
+          "D:/SEDAudio/NUPC-ARM/SC589",
+          "${workspaceFolder}"
+        ],
+        [
+          "D:\\SEDAudio\\NUPC-ARM\\SC589",
+          "${workspaceFolder}"
+        ]
+      ]
+    },
+    {
+      "name": "SHARC+ SC589 core 2 (external OpenOCD, attach: no reset, no load)",
+      "type": "lldb-dap",
+      "request": "attach",
+      "debugAdapterExecutable": "${config:sharc-plus.toolchain}/target/release/sharc-lldb-dap",
+      "initCommands": [
+        "settings set plugin.process.gdb-remote.packet-timeout 10",
+        "settings set target.inline-breakpoint-strategy always"
+      ],
+      "sourcePath": "${workspaceFolder}",
+      "debuggerRoot": "${workspaceFolder}",
+      "enableAutoVariableSummaries": true,
+      "enableSyntheticChildDebugging": true,
+      "program": "${workspaceFolder}/${config:sharc-plus.debugProgram}",
+      "gdb-remote-hostname": "127.0.0.1",
+      "gdb-remote-port": 3335,
+      "preLaunchTask": "SHARC+: attach SC589 (external OpenOCD)",
+      "stopOnEntry": false,
+      "commandEscapePrefix": "`",
+      "sharcCore": 2,
+      "sharcTclPort": 6666,
+      "sourceMap": [
+        [
+          "D:/SEDAudio/NUPC-ARM/SC589",
+          "${workspaceFolder}"
+        ],
+        [
+          "D:\\SEDAudio\\NUPC-ARM\\SC589",
+          "${workspaceFolder}"
+        ]
+      ]
+    },
+    {
+      "name": "SHARC+ SC589 core 1 (ICE-1000, load without reset)",
+      "type": "lldb-dap",
+      "request": "attach",
+      "debugAdapterExecutable": "${config:sharc-plus.toolchain}/target/release/sharc-lldb-dap",
+      "initCommands": [
+        "settings set plugin.process.gdb-remote.packet-timeout 10",
+        "settings set target.inline-breakpoint-strategy always"
+      ],
+      "sourcePath": "${workspaceFolder}",
+      "debuggerRoot": "${workspaceFolder}",
+      "enableAutoVariableSummaries": true,
+      "enableSyntheticChildDebugging": true,
+      "program": "${workspaceFolder}/${config:sharc-plus.debugProgram}",
+      "gdb-remote-hostname": "127.0.0.1",
+      "gdb-remote-port": 3334,
+      "preLaunchTask": "SHARC+: prepare SC589 core 1 (no reset)",
+      "postDebugTask": "SHARC+: stop OpenOCD",
+      "stopOnEntry": true,
+      "commandEscapePrefix": "`",
+      "sourceMap": [
+        [
+          "D:/SEDAudio/NUPC-ARM/SC589",
+          "${workspaceFolder}"
+        ],
+        [
+          "D:\\SEDAudio\\NUPC-ARM\\SC589",
+          "${workspaceFolder}"
+        ]
+      ]
+    },
+    {
+      "name": "SHARC+ SC589 core 2 (ICE-1000, load without reset)",
+      "type": "lldb-dap",
+      "request": "attach",
+      "debugAdapterExecutable": "${config:sharc-plus.toolchain}/target/release/sharc-lldb-dap",
+      "initCommands": [
+        "settings set plugin.process.gdb-remote.packet-timeout 10",
+        "settings set target.inline-breakpoint-strategy always"
+      ],
+      "sourcePath": "${workspaceFolder}",
+      "debuggerRoot": "${workspaceFolder}",
+      "enableAutoVariableSummaries": true,
+      "enableSyntheticChildDebugging": true,
+      "program": "${workspaceFolder}/${config:sharc-plus.debugProgram}",
+      "gdb-remote-hostname": "127.0.0.1",
+      "gdb-remote-port": 3335,
+      "preLaunchTask": "SHARC+: prepare SC589 core 2 (no reset)",
+      "postDebugTask": "SHARC+: stop OpenOCD",
+      "stopOnEntry": true,
+      "commandEscapePrefix": "`",
+      "sourceMap": [
+        [
+          "D:/SEDAudio/NUPC-ARM/SC589",
+          "${workspaceFolder}"
+        ],
+        [
+          "D:\\SEDAudio\\NUPC-ARM\\SC589",
+          "${workspaceFolder}"
+        ]
+      ]
+    },
+    {
+      "name": "SHARC+ SC589 core 1 (compound attach)",
+      "presentation": {
+        "hidden": true
+      },
+      "type": "lldb-dap",
+      "request": "attach",
+      "debugAdapterExecutable": "${config:sharc-plus.toolchain}/target/release/sharc-lldb-dap",
+      "initCommands": [
+        "settings set plugin.process.gdb-remote.packet-timeout 10",
+        "settings set target.inline-breakpoint-strategy always"
+      ],
+      "sourcePath": "${workspaceFolder}",
+      "debuggerRoot": "${workspaceFolder}",
+      "enableAutoVariableSummaries": true,
+      "enableSyntheticChildDebugging": true,
+      "program": "${workspaceFolder}/${config:sharc-plus.debugProgramCore1}",
+      "gdb-remote-hostname": "127.0.0.1",
+      "gdb-remote-port": 3334,
+      "postDebugTask": "SHARC+: release compound core 1",
+      "stopOnEntry": true,
+      "postRunCommands": [
+        "process plugin packet monitor sharcplus sync_halt on"
+      ],
+      "terminateCommands": [
+        "process plugin packet monitor sharcplus sync_halt off"
+      ],
+      "commandEscapePrefix": "`",
+      "sourceMap": [
+        [
+          "D:/SEDAudio/NUPC-ARM/SC589",
+          "${workspaceFolder}"
+        ],
+        [
+          "D:\\SEDAudio\\NUPC-ARM\\SC589",
+          "${workspaceFolder}"
+        ]
+      ]
+    },
+    {
+      "name": "SHARC+ SC589 core 2 (compound attach)",
+      "presentation": {
+        "hidden": true
+      },
+      "type": "lldb-dap",
+      "request": "attach",
+      "debugAdapterExecutable": "${config:sharc-plus.toolchain}/target/release/sharc-lldb-dap",
+      "initCommands": [
+        "settings set plugin.process.gdb-remote.packet-timeout 10",
+        "settings set target.inline-breakpoint-strategy always"
+      ],
+      "sourcePath": "${workspaceFolder}",
+      "debuggerRoot": "${workspaceFolder}",
+      "enableAutoVariableSummaries": true,
+      "enableSyntheticChildDebugging": true,
+      "program": "${workspaceFolder}/${config:sharc-plus.debugProgramCore2}",
+      "gdb-remote-hostname": "127.0.0.1",
+      "gdb-remote-port": 3335,
+      "postDebugTask": "SHARC+: release compound core 2",
+      "stopOnEntry": true,
+      "postRunCommands": [
+        "process plugin packet monitor sharcplus sync_halt on"
+      ],
+      "terminateCommands": [
+        "process plugin packet monitor sharcplus sync_halt off"
+      ],
+      "commandEscapePrefix": "`",
+      "sourceMap": [
+        [
+          "D:/SEDAudio/NUPC-ARM/SC589",
+          "${workspaceFolder}"
+        ],
+        [
+          "D:\\SEDAudio\\NUPC-ARM\\SC589",
+          "${workspaceFolder}"
+        ]
+      ]
+    },
+    {
+      "name": "SHARC+ SC589 core 1 (external OpenOCD, compound attach)",
+      "presentation": {
+        "hidden": true
+      },
+      "type": "lldb-dap",
+      "request": "attach",
+      "debugAdapterExecutable": "${config:sharc-plus.toolchain}/target/release/sharc-lldb-dap",
+      "initCommands": [
+        "settings set plugin.process.gdb-remote.packet-timeout 10",
+        "settings set target.inline-breakpoint-strategy always"
+      ],
+      "sourcePath": "${workspaceFolder}",
+      "debuggerRoot": "${workspaceFolder}",
+      "enableAutoVariableSummaries": true,
+      "enableSyntheticChildDebugging": true,
+      "program": "${workspaceFolder}/${config:sharc-plus.debugProgramCore1}",
+      "gdb-remote-hostname": "127.0.0.1",
+      "gdb-remote-port": 3334,
+      "postDebugTask": "SHARC+: release compound core 1 (external OpenOCD)",
+      "stopOnEntry": true,
+      "postRunCommands": [
+        "process plugin packet monitor sharcplus sync_halt on"
+      ],
+      "terminateCommands": [
+        "process plugin packet monitor sharcplus sync_halt off"
+      ],
+      "commandEscapePrefix": "`",
+      "sourceMap": [
+        [
+          "D:/SEDAudio/NUPC-ARM/SC589",
+          "${workspaceFolder}"
+        ],
+        [
+          "D:\\SEDAudio\\NUPC-ARM\\SC589",
+          "${workspaceFolder}"
+        ]
+      ]
+    },
+    {
+      "name": "SHARC+ SC589 core 2 (external OpenOCD, compound attach)",
+      "presentation": {
+        "hidden": true
+      },
+      "type": "lldb-dap",
+      "request": "attach",
+      "debugAdapterExecutable": "${config:sharc-plus.toolchain}/target/release/sharc-lldb-dap",
+      "initCommands": [
+        "settings set plugin.process.gdb-remote.packet-timeout 10",
+        "settings set target.inline-breakpoint-strategy always"
+      ],
+      "sourcePath": "${workspaceFolder}",
+      "debuggerRoot": "${workspaceFolder}",
+      "enableAutoVariableSummaries": true,
+      "enableSyntheticChildDebugging": true,
+      "program": "${workspaceFolder}/${config:sharc-plus.debugProgramCore2}",
+      "gdb-remote-hostname": "127.0.0.1",
+      "gdb-remote-port": 3335,
+      "postDebugTask": "SHARC+: release compound core 2 (external OpenOCD)",
+      "stopOnEntry": true,
+      "postRunCommands": [
+        "process plugin packet monitor sharcplus sync_halt on"
+      ],
+      "terminateCommands": [
+        "process plugin packet monitor sharcplus sync_halt off"
+      ],
+      "commandEscapePrefix": "`",
+      "sourceMap": [
+        [
+          "D:/SEDAudio/NUPC-ARM/SC589",
+          "${workspaceFolder}"
+        ],
+        [
+          "D:\\SEDAudio\\NUPC-ARM\\SC589",
+          "${workspaceFolder}"
+        ]
+      ]
+    },
+    {
+      "name": "Cortex-A5 SC589 (ICE-1000, attach)",
+      "type": "lldb-dap",
+      "request": "attach",
+      "debugAdapterExecutable": "${config:sharc-plus.toolchain}/target/release/sharc-lldb-dap",
+      "initCommands": [
+        "settings set plugin.process.gdb-remote.packet-timeout 10",
+        "settings set target.inline-breakpoint-strategy always"
+      ],
+      "sourcePath": "${workspaceFolder}",
+      "debuggerRoot": "${workspaceFolder}",
+      "enableAutoVariableSummaries": true,
+      "enableSyntheticChildDebugging": true,
+      "program": "${workspaceFolder}/${config:sharc-plus.debugProgramA5}",
+      "gdb-remote-hostname": "127.0.0.1",
+      "gdb-remote-port": 3333,
+      "preLaunchTask": "SHARC+: prepare SC589 A5",
+      "postDebugTask": "SHARC+: stop OpenOCD",
+      "stopOnEntry": true,
+      "commandEscapePrefix": "`",
+      "sourceMap": [
+        [
+          "D:/SEDAudio/NUPC-ARM/SC589",
+          "${workspaceFolder}"
+        ],
+        [
+          "D:\\SEDAudio\\NUPC-ARM\\SC589",
+          "${workspaceFolder}"
+        ]
+      ]
+    },
+    {
+      "name": "Cortex-A5 SC589 (compound attach)",
+      "presentation": {
+        "hidden": true
+      },
+      "type": "lldb-dap",
+      "request": "attach",
+      "debugAdapterExecutable": "${config:sharc-plus.toolchain}/target/release/sharc-lldb-dap",
+      "initCommands": [
+        "settings set plugin.process.gdb-remote.packet-timeout 10",
+        "settings set target.inline-breakpoint-strategy always"
+      ],
+      "sourcePath": "${workspaceFolder}",
+      "debuggerRoot": "${workspaceFolder}",
+      "enableAutoVariableSummaries": true,
+      "enableSyntheticChildDebugging": true,
+      "program": "${workspaceFolder}/${config:sharc-plus.debugProgramA5}",
+      "gdb-remote-hostname": "127.0.0.1",
+      "gdb-remote-port": 3333,
+      "postDebugTask": "SHARC+: release compound A5",
+      "stopOnEntry": true,
+      "commandEscapePrefix": "`",
+      "sourceMap": [
+        [
+          "D:/SEDAudio/NUPC-ARM/SC589",
+          "${workspaceFolder}"
+        ],
+        [
+          "D:\\SEDAudio\\NUPC-ARM\\SC589",
+          "${workspaceFolder}"
+        ]
+      ]
+    }
+  ],
+  "compounds": [
+    {
+      "name": "SHARC+ SC589 cores 1 + 2 (ICE-1000)",
+      "configurations": [
+        "SHARC+ SC589 core 1 (compound attach)",
+        "SHARC+ SC589 core 2 (compound attach)"
+      ],
+      "preLaunchTask": "SHARC+: prepare SC589 cores 1 + 2",
+      "stopAll": true
+    },
+    {
+      "name": "SHARC+ SC589 cores 1 + 2 (external OpenOCD)",
+      "configurations": [
+        "SHARC+ SC589 core 1 (external OpenOCD, compound attach)",
+        "SHARC+ SC589 core 2 (external OpenOCD, compound attach)"
+      ],
+      "preLaunchTask": "SHARC+: prepare SC589 cores 1 + 2 (external OpenOCD)",
+      "stopAll": true
+    },
+    {
+      "name": "SC589 A5 + SHARC+ cores 1 + 2 (ICE-1000)",
+      "configurations": [
+        "Cortex-A5 SC589 (compound attach)",
+        "SHARC+ SC589 core 1 (compound attach)",
+        "SHARC+ SC589 core 2 (compound attach)"
+      ],
+      "preLaunchTask": "SHARC+: prepare SC589 A5 + cores 1 + 2",
+      "stopAll": true
+    }
+  ]
+}

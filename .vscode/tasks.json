@@ -1,0 +1,587 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "SHARC+: start OpenOCD SC589",
+      "type": "process",
+      "command": "${config:sharc-plus.toolchain}/target/release/sharc-debug",
+      "args": [
+        "server",
+        "--probe",
+        "ice1000",
+        "--board",
+        "adspsc589_ezbrd"
+      ],
+      "isBackground": true,
+      "problemMatcher": {
+        "owner": "sharc-openocd",
+        "pattern": {
+          "regexp": "$^"
+        },
+        "background": {
+          "activeOnStart": true,
+          "beginsPattern": "Open On-Chip Debugger",
+          "endsPattern": "Listening on port 6666 for tcl connections"
+        }
+      },
+      "presentation": {
+        "reveal": "always",
+        "panel": "dedicated",
+        "clear": true
+      },
+      "options": {
+        "cwd": "${config:sharc-plus.toolchain}"
+      }
+    },
+    {
+      "label": "SHARC+: stop OpenOCD",
+      "type": "process",
+      "command": "${config:sharc-plus.toolchain}/target/release/sharc-debug",
+      "args": [
+        "shutdown"
+      ],
+      "problemMatcher": [],
+      "options": {
+        "cwd": "${config:sharc-plus.toolchain}"
+      }
+    },
+    {
+      "label": "SHARC+: pause all cores independently",
+      "type": "process",
+      "command": "${config:sharc-plus.toolchain}/target/release/sharc-debug",
+      "args": [
+        "pause-all",
+        "--state",
+        "${workspaceFolder}/out/debug-session/all-stop"
+      ],
+      "problemMatcher": [],
+      "options": {
+        "cwd": "${config:sharc-plus.toolchain}"
+      }
+    },
+    {
+      "label": "SHARC+: resume independently paused cores",
+      "type": "process",
+      "command": "${config:sharc-plus.toolchain}/target/release/sharc-debug",
+      "args": [
+        "resume-all",
+        "--state",
+        "${workspaceFolder}/out/debug-session/all-stop"
+      ],
+      "problemMatcher": [],
+      "options": {
+        "cwd": "${config:sharc-plus.toolchain}"
+      }
+    },
+    {
+      "label": "SHARC+: profile SC589 core 1 (10 seconds)",
+      "type": "process",
+      "command": "${config:sharc-plus.toolchain}/target/release/sharc-debug",
+      "args": [
+        "profile",
+        "--core",
+        "1",
+        "--seconds",
+        "10",
+        "--output",
+        "${workspaceFolder}/out/debug-profile/core1.gmon"
+      ],
+      "problemMatcher": [],
+      "options": {
+        "cwd": "${config:sharc-plus.toolchain}"
+      }
+    },
+    {
+      "label": "SHARC+: symbolize SC589 core 1 profile",
+      "type": "process",
+      "command": "${config:sharc-plus.toolchain}/target/release/sharc-debug",
+      "args": [
+        "profile-report",
+        "--program",
+        "${workspaceFolder}/${config:sharc-plus.debugProgram}",
+        "--input",
+        "${workspaceFolder}/out/debug-profile/core1.gmon",
+        "--output",
+        "${workspaceFolder}/out/debug-profile/core1.csv"
+      ],
+      "problemMatcher": [],
+      "options": {
+        "cwd": "${config:sharc-plus.toolchain}"
+      }
+    },
+    {
+      "label": "SHARC+: profile SC589 core 2 (10 seconds)",
+      "type": "process",
+      "command": "${config:sharc-plus.toolchain}/target/release/sharc-debug",
+      "args": [
+        "profile",
+        "--core",
+        "2",
+        "--seconds",
+        "10",
+        "--output",
+        "${workspaceFolder}/out/debug-profile/core2.gmon"
+      ],
+      "problemMatcher": [],
+      "options": {
+        "cwd": "${config:sharc-plus.toolchain}"
+      }
+    },
+    {
+      "label": "SHARC+: symbolize SC589 core 2 profile",
+      "type": "process",
+      "command": "${config:sharc-plus.toolchain}/target/release/sharc-debug",
+      "args": [
+        "profile-report",
+        "--program",
+        "${workspaceFolder}/${config:sharc-plus.debugProgramCore2}",
+        "--input",
+        "${workspaceFolder}/out/debug-profile/core2.gmon",
+        "--output",
+        "${workspaceFolder}/out/debug-profile/core2.csv"
+      ],
+      "problemMatcher": [],
+      "options": {
+        "cwd": "${config:sharc-plus.toolchain}"
+      }
+    },
+    {
+      "label": "SHARC+: load SC589 core 1",
+      "type": "process",
+      "command": "${config:sharc-plus.toolchain}/target/release/sharc-debug",
+      "args": [
+        "load",
+        "--core",
+        "1",
+        "--stop-at",
+        "main",
+        "${workspaceFolder}/${config:sharc-plus.debugProgram}"
+      ],
+      "problemMatcher": [],
+      "options": {
+        "cwd": "${config:sharc-plus.toolchain}"
+      }
+    },
+    {
+      "label": "SHARC+: recover SC589 core 1 transport",
+      "type": "process",
+      "command": "${config:sharc-plus.toolchain}/target/release/sharc-debug",
+      "args": [
+        "recover",
+        "--core",
+        "1"
+      ],
+      "problemMatcher": [],
+      "options": {
+        "cwd": "${config:sharc-plus.toolchain}"
+      }
+    },
+    {
+      "label": "SHARC+: load SC589 core 2",
+      "type": "process",
+      "command": "${config:sharc-plus.toolchain}/target/release/sharc-debug",
+      "args": [
+        "load",
+        "--core",
+        "2",
+        "--stop-at",
+        "main",
+        "${workspaceFolder}/${config:sharc-plus.debugProgram}"
+      ],
+      "problemMatcher": [],
+      "options": {
+        "cwd": "${config:sharc-plus.toolchain}"
+      }
+    },
+    {
+      "label": "SHARC+: recover SC589 core 2 transport",
+      "type": "process",
+      "command": "${config:sharc-plus.toolchain}/target/release/sharc-debug",
+      "args": [
+        "recover",
+        "--core",
+        "2"
+      ],
+      "problemMatcher": [],
+      "options": {
+        "cwd": "${config:sharc-plus.toolchain}"
+      }
+    },
+    {
+      "label": "SHARC+: load SC589 cores 1 + 2",
+      "type": "process",
+      "command": "${config:sharc-plus.toolchain}/target/release/sharc-debug",
+      "args": [
+        "load-pair",
+        "--shutdown-on-error",
+        "--stop-at",
+        "main",
+        "${workspaceFolder}/${config:sharc-plus.debugProgramCore1}",
+        "${workspaceFolder}/${config:sharc-plus.debugProgramCore2}"
+      ],
+      "problemMatcher": [],
+      "options": {
+        "cwd": "${config:sharc-plus.toolchain}"
+      }
+    },
+    {
+      "label": "SHARC+: begin compound cores 1 + 2",
+      "type": "process",
+      "command": "${config:sharc-plus.toolchain}/target/release/sharc-debug",
+      "args": [
+        "session-begin",
+        "--state",
+        "${workspaceFolder}/out/debug-session/compound",
+        "--participants",
+        "core1,core2"
+      ],
+      "problemMatcher": [],
+      "options": {
+        "cwd": "${config:sharc-plus.toolchain}"
+      }
+    },
+    {
+      "label": "SHARC+: validate Cortex-A5 symbols",
+      "type": "process",
+      "command": "${config:sharc-plus.toolchain}/target/release/sharc-debug",
+      "args": [
+        "validate-a5-symbols",
+        "${workspaceFolder}/${config:sharc-plus.debugProgramA5}"
+      ],
+      "problemMatcher": [],
+      "options": {
+        "cwd": "${config:sharc-plus.toolchain}"
+      }
+    },
+    {
+      "label": "SHARC+: begin compound A5 + cores 1 + 2",
+      "type": "process",
+      "command": "${config:sharc-plus.toolchain}/target/release/sharc-debug",
+      "args": [
+        "session-begin",
+        "--state",
+        "${workspaceFolder}/out/debug-session/compound",
+        "--participants",
+        "a5,core1,core2"
+      ],
+      "problemMatcher": [],
+      "options": {
+        "cwd": "${config:sharc-plus.toolchain}"
+      }
+    },
+    {
+      "label": "SHARC+: release compound core 1",
+      "type": "process",
+      "command": "${config:sharc-plus.toolchain}/target/release/sharc-debug",
+      "args": [
+        "session-release",
+        "--state",
+        "${workspaceFolder}/out/debug-session/compound",
+        "--participant",
+        "core1"
+      ],
+      "problemMatcher": [],
+      "options": {
+        "cwd": "${config:sharc-plus.toolchain}"
+      }
+    },
+    {
+      "label": "SHARC+: release compound core 2",
+      "type": "process",
+      "command": "${config:sharc-plus.toolchain}/target/release/sharc-debug",
+      "args": [
+        "session-release",
+        "--state",
+        "${workspaceFolder}/out/debug-session/compound",
+        "--participant",
+        "core2"
+      ],
+      "problemMatcher": [],
+      "options": {
+        "cwd": "${config:sharc-plus.toolchain}"
+      }
+    },
+    {
+      "label": "SHARC+: release compound A5",
+      "type": "process",
+      "command": "${config:sharc-plus.toolchain}/target/release/sharc-debug",
+      "args": [
+        "session-release",
+        "--state",
+        "${workspaceFolder}/out/debug-session/compound",
+        "--participant",
+        "a5"
+      ],
+      "problemMatcher": [],
+      "options": {
+        "cwd": "${config:sharc-plus.toolchain}"
+      }
+    },
+    {
+      "label": "SHARC+: abort stale compound",
+      "type": "process",
+      "command": "${config:sharc-plus.toolchain}/target/release/sharc-debug",
+      "args": [
+        "session-abort",
+        "--state",
+        "${workspaceFolder}/out/debug-session/compound"
+      ],
+      "problemMatcher": [],
+      "options": {
+        "cwd": "${config:sharc-plus.toolchain}"
+      }
+    },
+    {
+      "label": "SHARC+: prepare SC589 A5",
+      "dependsOrder": "sequence",
+      "dependsOn": [
+        "SHARC+: abort stale compound",
+        "SHARC+: validate Cortex-A5 symbols",
+        "SHARC+: start OpenOCD SC589"
+      ],
+      "problemMatcher": []
+    },
+    {
+      "label": "SHARC+: load SC589 core 1 (no reset)",
+      "type": "process",
+      "command": "${config:sharc-plus.toolchain}/target/release/sharc-debug",
+      "args": [
+        "load",
+        "--core",
+        "1",
+        "--no-reset",
+        "--halt",
+        "${workspaceFolder}/${config:sharc-plus.debugProgram}"
+      ],
+      "problemMatcher": [],
+      "options": {
+        "cwd": "${config:sharc-plus.toolchain}"
+      }
+    },
+    {
+      "label": "SHARC+: prepare SC589 core 1 (no reset)",
+      "dependsOrder": "sequence",
+      "dependsOn": [
+        "SHARC+: abort stale compound",
+        "SHARC+: start OpenOCD SC589",
+        "SHARC+: load SC589 core 1 (no reset)"
+      ],
+      "problemMatcher": []
+    },
+    {
+      "label": "SHARC+: load SC589 core 2 (no reset)",
+      "type": "process",
+      "command": "${config:sharc-plus.toolchain}/target/release/sharc-debug",
+      "args": [
+        "load",
+        "--core",
+        "2",
+        "--no-reset",
+        "--halt",
+        "${workspaceFolder}/${config:sharc-plus.debugProgram}"
+      ],
+      "problemMatcher": [],
+      "options": {
+        "cwd": "${config:sharc-plus.toolchain}"
+      }
+    },
+    {
+      "label": "SHARC+: prepare SC589 core 2 (no reset)",
+      "dependsOrder": "sequence",
+      "dependsOn": [
+        "SHARC+: abort stale compound",
+        "SHARC+: start OpenOCD SC589",
+        "SHARC+: load SC589 core 2 (no reset)"
+      ],
+      "problemMatcher": []
+    },
+    {
+      "label": "SHARC+: attach SC589",
+      "dependsOrder": "sequence",
+      "dependsOn": [
+        "SHARC+: abort stale compound",
+        "SHARC+: start OpenOCD SC589"
+      ],
+      "problemMatcher": []
+    },
+    {
+      "label": "SHARC+: prepare SC589 core 1",
+      "dependsOrder": "sequence",
+      "dependsOn": [
+        "SHARC+: abort stale compound",
+        "SHARC+: start OpenOCD SC589",
+        "SHARC+: load SC589 core 1"
+      ],
+      "problemMatcher": []
+    },
+    {
+      "label": "SHARC+: prepare SC589 core 2",
+      "dependsOrder": "sequence",
+      "dependsOn": [
+        "SHARC+: abort stale compound",
+        "SHARC+: start OpenOCD SC589",
+        "SHARC+: load SC589 core 2"
+      ],
+      "problemMatcher": []
+    },
+    {
+      "label": "SHARC+: prepare SC589 cores 1 + 2",
+      "dependsOrder": "sequence",
+      "dependsOn": [
+        "SHARC+: abort stale compound",
+        "SHARC+: start OpenOCD SC589",
+        "SHARC+: load SC589 cores 1 + 2",
+        "SHARC+: begin compound cores 1 + 2"
+      ],
+      "problemMatcher": []
+    },
+    {
+      "label": "SHARC+: prepare SC589 A5 + cores 1 + 2",
+      "dependsOrder": "sequence",
+      "dependsOn": [
+        "SHARC+: abort stale compound",
+        "SHARC+: validate Cortex-A5 symbols",
+        "SHARC+: start OpenOCD SC589",
+        "SHARC+: load SC589 cores 1 + 2",
+        "SHARC+: begin compound A5 + cores 1 + 2"
+      ],
+      "problemMatcher": []
+    },
+    {
+      "label": "SHARC+: live CPU status",
+      "type": "process",
+      "command": "${config:sharc-plus.toolchain}/target/release/sharc-debug",
+      "args": [
+        "status"
+      ],
+      "problemMatcher": [],
+      "presentation": {
+        "reveal": "always",
+        "panel": "dedicated",
+        "clear": true
+      },
+      "options": {
+        "cwd": "${config:sharc-plus.toolchain}"
+      }
+    },
+    {
+      "label": "SHARC+: check external OpenOCD",
+      "type": "process",
+      "command": "${config:sharc-plus.toolchain}/target/release/sharc-debug",
+      "args": [
+        "status",
+        "--once"
+      ],
+      "problemMatcher": [],
+      "options": {
+        "cwd": "${config:sharc-plus.toolchain}"
+      }
+    },
+    {
+      "label": "SHARC+: prepare SC589 core 1 (external OpenOCD)",
+      "dependsOn": [
+        "SHARC+: abort stale compound (external OpenOCD)",
+        "SHARC+: check external OpenOCD",
+        "SHARC+: load SC589 core 1"
+      ],
+      "dependsOrder": "sequence",
+      "problemMatcher": []
+    },
+    {
+      "label": "SHARC+: prepare SC589 core 2 (external OpenOCD)",
+      "dependsOn": [
+        "SHARC+: abort stale compound (external OpenOCD)",
+        "SHARC+: check external OpenOCD",
+        "SHARC+: load SC589 core 2"
+      ],
+      "dependsOrder": "sequence",
+      "problemMatcher": []
+    },
+    {
+      "label": "SHARC+: attach SC589 (external OpenOCD)",
+      "dependsOn": [
+        "SHARC+: abort stale compound (external OpenOCD)",
+        "SHARC+: check external OpenOCD"
+      ],
+      "dependsOrder": "sequence",
+      "problemMatcher": []
+    },
+    {
+      "label": "SHARC+: abort stale compound (external OpenOCD)",
+      "type": "process",
+      "command": "${config:sharc-plus.toolchain}/target/release/sharc-debug",
+      "args": [
+        "session-abort",
+        "--state",
+        "${workspaceFolder}/out/debug-session/compound",
+        "--keep-server"
+      ],
+      "problemMatcher": [],
+      "options": {
+        "cwd": "${config:sharc-plus.toolchain}"
+      }
+    },
+    {
+      "label": "SHARC+: release compound core 1 (external OpenOCD)",
+      "type": "process",
+      "command": "${config:sharc-plus.toolchain}/target/release/sharc-debug",
+      "args": [
+        "session-release",
+        "--state",
+        "${workspaceFolder}/out/debug-session/compound",
+        "--participant",
+        "core1",
+        "--keep-server"
+      ],
+      "problemMatcher": [],
+      "options": {
+        "cwd": "${config:sharc-plus.toolchain}"
+      }
+    },
+    {
+      "label": "SHARC+: release compound core 2 (external OpenOCD)",
+      "type": "process",
+      "command": "${config:sharc-plus.toolchain}/target/release/sharc-debug",
+      "args": [
+        "session-release",
+        "--state",
+        "${workspaceFolder}/out/debug-session/compound",
+        "--participant",
+        "core2",
+        "--keep-server"
+      ],
+      "problemMatcher": [],
+      "options": {
+        "cwd": "${config:sharc-plus.toolchain}"
+      }
+    },
+    {
+      "label": "SHARC+: load SC589 cores 1 + 2 (external OpenOCD)",
+      "type": "process",
+      "command": "${config:sharc-plus.toolchain}/target/release/sharc-debug",
+      "args": [
+        "load-pair",
+        "--stop-at",
+        "main",
+        "${workspaceFolder}/${config:sharc-plus.debugProgramCore1}",
+        "${workspaceFolder}/${config:sharc-plus.debugProgramCore2}"
+      ],
+      "problemMatcher": [],
+      "options": {
+        "cwd": "${config:sharc-plus.toolchain}"
+      }
+    },
+    {
+      "label": "SHARC+: prepare SC589 cores 1 + 2 (external OpenOCD)",
+      "dependsOn": [
+        "SHARC+: abort stale compound (external OpenOCD)",
+        "SHARC+: check external OpenOCD",
+        "SHARC+: load SC589 cores 1 + 2 (external OpenOCD)",
+        "SHARC+: begin compound cores 1 + 2"
+      ],
+      "dependsOrder": "sequence",
+      "problemMatcher": []
+    }
+  ],
+  "inputs": []
+}
