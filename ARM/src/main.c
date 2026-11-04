@@ -69,6 +69,9 @@
 #include "exception.h"
 #include "si3536.h"
 #include "cces_hacks.h"
+#ifdef SAM_NUPC
+#include "nupc_glue.h"
+#endif
 
 /* Application context */
 APP_CONTEXT mainAppContext;
@@ -470,6 +473,27 @@ static void execShellCmdFile(SHELL_CONTEXT *shell)
 }
 
 /* System startup task -> background shell task */
+#ifdef SAM_NUPC
+/*
+ * NUPC background tier: runs the queued large-partition FFT/MAC steps whenever nothing more important is running.
+ * The audio DMA callback (an interrupt) preempts this task at any point and finishes whatever is late itself, so
+ * its priority only decides how much of the leftover CPU goes to background work. Same call as the bare-metal
+ * product's idle loop: nupc_service_background().
+ */
+#define NUPC_TASK_PRIORITY    (tskIDLE_PRIORITY + 1)
+#define NUPC_TASK_STACK_SIZE  (configMINIMAL_STACK_SIZE + 4096)
+
+static portTASK_FUNCTION( nupcBackgroundTask, pvParameters )
+{
+    (void)pvParameters;
+    for (;;) {
+        if (nupc_service_background(1) == 0) {
+            vTaskDelay(1);  /* nothing queued: look again in a tick */
+        }
+    }
+}
+#endif
+
 static portTASK_FUNCTION( startupTask, pvParameters )
 {
     APP_CONTEXT *context = (APP_CONTEXT *)pvParameters;
@@ -642,6 +666,23 @@ static portTASK_FUNCTION( startupTask, pvParameters )
 
     /* Initialize A2B in master mode */
     a2b_master_init(context);
+
+#ifdef SAM_NUPC
+    /* Prepare the NUPC convolver (allocates; audio is not running yet). It starts disabled: use the "nupc on" shell command. */
+    {
+        NUPC_CONFIG nupcCfg;
+        nupc_default_config(&nupcCfg);
+        nupcCfg.cpuHz = CCLK;
+        int nupcErr = nupc_start(&nupcCfg);
+        if (nupcErr == 0) {
+            nupc_set_enabled(false);
+            xTaskCreate( nupcBackgroundTask, "NupcTask", NUPC_TASK_STACK_SIZE,
+                NULL, NUPC_TASK_PRIORITY, NULL );
+        } else {
+            printf("NUPC: start failed (%d)\n", nupcErr);
+        }
+    }
+#endif
 
     /* Initialize the various audio clock domains */
     clock_domain_init(context);

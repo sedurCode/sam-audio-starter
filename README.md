@@ -3,7 +3,7 @@
 Test harness for running a non-uniform partitioned convolution (NUPC) engine on the Cortex-A5 of the
 SHARC Audio Module (ADZS-SC589-MINI). It is ADI's SAM audio starter (FreeRTOS on the ARM, two SHARC+
 cores) with a CMake build and a VS Code debug profile for the open SHARC+ toolchain. The NUPC code itself
-is not integrated yet - see [docs/NUPC-THREADING-PLAN.md](docs/NUPC-THREADING-PLAN.md).
+is integrated (builds, host-tested, not yet run on the board) - see [docs/NUPC-THREADING-PLAN.md](docs/NUPC-THREADING-PLAN.md).
 
 The original ADI README is kept as [README-SAM-Audio-Starter.md](README-SAM-Audio-Starter.md); the original
 makefile build in `build/` still works.
@@ -18,6 +18,26 @@ makefile build in `build/` still works.
 | `CMakeLists.txt`, `CMakePresets.json`, `cmake/` | CMake build (details in [README-CMake.md](README-CMake.md)) |
 | `.vscode/` | Debug profile for the WSL sharc-plus-toolchain (below) |
 | `docs/` | Plan and design notes |
+
+## NUPC convolution
+The convolution engine (`ARM/src/nupc/`, FFT: vendored Ne10 in `ARM/src/oss-services/ne10/`) is built into the ARM
+application by default (CMake option `SAM_NUPC`, arena size `SAM_NUPC_ARENA_MB`). It processes **codec input channel 0**
+(mono, 64-sample blocks, 48 kHz) in `processAudio()` before the routing table, with the embedded 10 s York Minster IR
+(1 s used by default). It is prepared at boot but **disabled**; from the shell (USB CDC / UART):
+
+```
+nupc test     # impulse self-test through the real Ne10 NEON FFT (run this first)
+nupc on       # enable;  nupc off to bypass
+nupc          # statistics: cycles per block vs budget, background/foreground/stolen steps, deadline misses
+```
+Threading (no OS threads in the engine): small partitions run on the audio callback, large ones as queued steps that a
+low-priority FreeRTOS task executes (the product would call the same `nupc_service_background()` from its idle loop).
+See [ARM/src/nupc/README.md](ARM/src/nupc/README.md) and [docs/NUPC-THREADING-PLAN.md](docs/NUPC-THREADING-PLAN.md).
+
+Host unit test (native, in WSL; no hardware): `cmake -S test/host -B /tmp/nupc-host -DCMAKE_BUILD_TYPE=Release && cmake --build /tmp/nupc-host && /tmp/nupc-host/test_nupc`
+(`-DNUPC_TSAN=ON` for ThreadSanitizer; `NUPC_PACE_US` sets the concurrent mode's callback pacing, 1333 = real time).
+
+**Status:** builds on CCES 2.8.3 and 2.11.1; host test passes. Not yet run on the board.
 
 ## Build
 Needs CMake >= 3.20, Ninja, and CCES 2.8.3 or 2.11.1 under `C:\Analog Devices\`. From Git bash or any shell:

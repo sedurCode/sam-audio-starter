@@ -570,7 +570,16 @@ uint8_t __adi_heap_object[STD_C_HEAP_SIZE] __attribute__ ((section (".heap")));
  * libc stack initialization
  **********************************************************************/
 uint8_t __adi_stack_sys_object[1024] __attribute__ ((section (".stack_sys")));
-uint8_t __adi_stack_sup_object[1024] __attribute__ ((section (".stack_sup")));
+/*
+ * The supervisor stack is also the FreeRTOS interrupt stack: the audio DMA callbacks (and, with SAM_NUPC, the
+ * convolution foreground tier including small Ne10 FFTs) run on it, so it is larger than the 1 KB default.
+ */
+#ifdef SAM_NUPC
+#define SUP_STACK_SIZE (16 * 1024)
+#else
+#define SUP_STACK_SIZE 1024
+#endif
+uint8_t __adi_stack_sup_object[SUP_STACK_SIZE] __attribute__ ((section (".stack_sup")));
 uint8_t __adi_stack_fiq_object[1024] __attribute__ ((section (".stack_fiq")));
 uint8_t __adi_stack_irq_object[1024] __attribute__ ((section (".stack_irq")));
 uint8_t __adi_stack_abort_object[1024] __attribute__ ((section (".stack_abort")));

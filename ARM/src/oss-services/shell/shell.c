@@ -62,6 +62,9 @@ SHELL_FUNC( shell_cat );
 SHELL_FUNC( shell_cp );
 SHELL_FUNC( shell_stacks );
 SHELL_FUNC( shell_cpu );
+#ifdef SAM_NUPC
+SHELL_FUNC( shell_nupc );
+#endif
 SHELL_FUNC( shell_usb );
 SHELL_FUNC( shell_recv );
 SHELL_FUNC( shell_send );
@@ -105,6 +108,9 @@ SHELL_HELP( cat );
 SHELL_HELP( cp );
 SHELL_HELP( stacks );
 SHELL_HELP( cpu );
+#ifdef SAM_NUPC
+SHELL_HELP( nupc );
+#endif
 SHELL_HELP( usb );
 SHELL_HELP( recv );
 SHELL_HELP( send );
@@ -155,6 +161,9 @@ const SHELL_COMMAND shell_commands[] =
   { "copy", shell_cp },
   { "stacks", shell_stacks },
   { "cpu", shell_cpu },
+#ifdef SAM_NUPC
+  { "nupc", shell_nupc },
+#endif
   { "uac", shell_usb },
   { "usb", shell_usb },
   { "recv", shell_recv },
@@ -204,6 +213,9 @@ static const SHELL_HELP_DATA shell_help_data[] =
   SHELL_INFO( cp ),
   SHELL_INFO( stacks ),
   SHELL_INFO( cpu ),
+#ifdef SAM_NUPC
+  SHELL_INFO( nupc ),
+#endif
   SHELL_INFO( usb ),
   SHELL_INFO( recv ),
   SHELL_INFO( send ),

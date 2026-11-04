@@ -1,7 +1,6 @@
 # Plan: NUPC on the SAM (ADSP-SC589) ARM core - threading strategy and integration
 
-Revision 2 (2026-11-04). Supersedes the first draft: the project now exists (SAM audio starter, CMake),
-and the harness uses FreeRTOS.
+Revision 3 (2026-11-04). Integration implemented (steps 1-5 below); verification on hardware still open.
 
 ## Context
 `../nupc/` (outside this repo) holds the non-uniform partitioned convolution (NUPC) engine from i.MX8/i.MX95
@@ -32,55 +31,45 @@ over IRQ dispatch, tick and stacks).
   - far too small for NUPC buffers (about 16 B/tap, ~8 MB for a 10 s IR): use a dedicated static arena in DDR/L2, not the FreeRTOS heap.
 - CCES IRQ dispatcher (`.../cortex-a5/runtime/Source/int/exception_dispatcher.S`, same in 2.8.3 and 2.11.1) saves
   FPSCR/FPEXC and D0-D7/D16-D31 around handlers, so NEON in an ISR is safe against NEON in thread context.
-  **Open item:** confirm the FreeRTOS CA5 port (`portable/CCES/ARM_CA5`) saves the NEON/VFP context per task, otherwise a
-  NEON-using background task can corrupt another task. Check before enabling the background task.
-- nupc sources are OS-free below `NupcConvolver`; the bare-metal seam is `TaskScheduler`. Ne10 is the FFT and is **not**
-  in this repo yet. `ne10_init()` reads `/proc/cpuinfo` and must be replaced.
+  **Resolved:** `configUSE_TASK_FPU_SUPPORT = 2`, so FreeRTOS saves the VFP/NEON context for every task, and the CA5 dispatcher is FPU-safe in ISRs.
+- nupc sources are OS-free below `NupcConvolver`; the bare-metal seam is `TaskScheduler`. Ne10 is the FFT (now vendored);
+  upstream `ne10_init()` reads `/proc/cpuinfo`, replaced by `ne10_bm_init()`.
 - ADI SC589 has a hardware FFT accelerator (`adi_fft.h`): possible future `RealFft` backend.
 
 ## Steps
 ### Done
-- SC589 project created: SAM audio starter (fork `sedurCode/sam-audio-starter`) + CMake port for all three cores; debug
-  and release build on CCES 2.8.3 and 2.11.1 (`CMakeLists.txt`, `CMakePresets.json`, `cmake/`).
-- VS Code debug profile for the open SHARC+ toolchain's LLDB/OpenOCD (`.vscode/`, see README).
+- SC589 project: SAM audio starter + CMake for all three cores; debug/release on CCES 2.8.3 and 2.11.1.
+- VS Code debug profile for the open SHARC+ toolchain (`.vscode/`, see README).
+- **1. nupc imported** into `ARM/src/nupc/` (C++11, `-fno-exceptions -fno-rtti`), guarded by `NUPC_BARE_METAL`; the
+  Linux code path and the engine core are unchanged. Details: `ARM/src/nupc/README.md`.
+- **2. Ne10 vendored** (float32 FFT only, NEON intrinsics, no assembly) in `ARM/src/oss-services/ne10/`: no
+  `/proc/cpuinfo`, allocations routed to the NUPC arena, built with `NE10_DSP_RFFT_SCALING` so c2r applies 1/N as
+  `Convolution.h` expects (without that define neither direction scales).
+- **3. `NupcPlatform`**: PMCCNTR clock (core clock = `CCLK`, 450 MHz on the SAM), flush-to-zero, arena (16 MB in DDR,
+  `SAM_NUPC_ARENA_MB`).
+- **4. `BareMetalTaskScheduler`**: foreground tier on the callback + EDF background tier via `serviceBackground()`;
+  the FreeRTOS harness runs it from `nupcBackgroundTask` (priority idle+1).
+- **5. Starter integration**: `nupc_process_s32()` is called from `processAudio()` on codec-in channel 0 (in place,
+  before routing); `nupc_start()` runs once in `startupTask` before the clock domains start; the engine starts
+  **disabled** - use the shell: `nupc on|off|reset|test`. The 16 KB supervisor/interrupt stack replaces the 1 KB
+  default (`init.c`) and lives in DDR via `build/ARM-SAM-Audio-Starter-nupc.ld` (L2 has no room).
+- Host test (`test/host/`): engine vs direct convolution, 4 scheduler modes, TSAN clean.
 
-### 1. Bring nupc into the repo
-- Add `nupc/` under `ARM/src/nupc/` (or as a linked folder), compiled with `-std=gnu++11`; add C++ language to CMake
-  for the ARM target only. The starter is C-only today, so check `-fno-exceptions -fno-rtti` and libstdc++ linking.
-- Define `NUPC_BARE_METAL`; compile out `ThreadedTaskScheduler.hpp`, `<thread>/<mutex>/<chrono>`, `TraceMarker`.
+### Open
+- **Run on hardware**: `nupc test` (real Ne10 NEON FFT), then `nupc on` with audio and watch `nupc` stats.
+- Deadline misses under load; tune `foregroundFrames` (512), `kBackgroundBudgetFraction` (0.70), IR length (1 s), `maxBlock` (4096).
+- Cost of the scalar head FIR and MAC loops (no NEON intrinsics; GCC does not auto-vectorise them at -O1/-O2).
+- Stereo / more channels; real IR loading instead of the embedded York Minster table.
+- Bare-metal product: drive `nupc_service_background()` from the idle loop instead of a FreeRTOS task.
 
-### 2. Vendor Ne10
-- Build only the real-FFT parts for armv7-a NEON hard-float; replace `ne10_init()`; route `NE10_MALLOC` to the arena.
-- Settle inverse-FFT scaling with an on-target round-trip test (`fft.hpp` and `Convolution.h:254-258` disagree).
-
-### 3. `NupcPlatform.h`
-- PMCCNTR cycle counter (`readCycles`), `readNanos()` = cycles / measured `cpuHz` (replaces `steady_clock`).
-- ARMv7 flush-to-zero (FPSCR bit 24) in the thread/ISR contexts that run NUPC.
-
-### 4. `BareMetalTaskScheduler.hpp` (core work)
-- `start(task, deadlineFrames)` from the audio callback: tasks with deadline `< fgThresholdFrames` run in the callback
-  (reuse `AudioThreadTaskScheduler` round-robin + time budget); others are queued with an absolute due time.
-- `serviceBackground(maxSteps)`: pick earliest-deadline queued task, claim by CAS, run **one step** (one FFT, one MAC chunk
-  or one IFFT), re-queue or mark done. Stepping lets EDF re-pick, bounding blocking to one FFT.
-- `join()` in the callback: done -> consume; queued -> steal and run inline; running (background was preempted mid-step)
-  -> count a deadline miss and drop that block. 32-bit atomics only (lock-free on Cortex-A5).
-- Harness driver: one FreeRTOS task, lowest priority above idle, loops `serviceBackground()`. Product driver: idle loop.
-- Stats: misses, steals, queue depth, worst callback cycles, background busy/idle cycles.
-
-### 5. Integration in the starter
-- Add a NUPC processing stage reachable from `processAudio()` (new stream/route in `route.h`, or a codec-in -> NUPC -> codec-out
-  inline stage); mono first.
-- Keep the arena in DDR (or L2 for short IRs); do not use the FreeRTOS heap.
-
-### 6. Verification
-1. Builds on both CCES versions (`debug`, `release`, `debug-283`, `release-283`), no `pthread`/`sem_*` symbols (`arm-none-eabi-nm`).
-2. FFT round-trip error < 1e-5 on target.
-3. Measured `cpuHz` printed (expect ~450-500 MHz).
-4. 60 s real-time run: zero deadline misses; worst callback cycles as % of the 64-sample budget (1.33 ms).
-5. Output vs offline reference (`AudioThreadTaskScheduler`, all joined inline): max abs diff <= 1e-6 when misses = 0.
-6. Raise IR length / max block until misses appear: the sustainable reverb length, and whether finer priority levels
+### Verification checklist
+1. Builds on both CCES versions (`debug`, `release`, `debug-283`, `release-283`) - done for debug, debug-283, release.
+2. Host test passes (`test/host`) - done.
+3. `nupc test` PASS on target (max error < 1e-3 of the IR peak, serviced and stolen).
+4. 60 s real-time run with `nupc on`: zero deadline misses; `cycles/block max` below the budget (64 samples = 1.33 ms = 600 k cycles at 450 MHz).
+5. Raise IR length / `maxBlock` until misses appear: the sustainable reverb length, and whether finer priority levels
    (GIC software interrupts, SST style) are needed.
-7. Product fit: integration surface is `prepare()` at init, `process()` in the audio path, `serviceBackground()` from an idle context.
+6. Product fit: integration surface is `nupc_start()` at init, `nupc_process_s32()` in the audio path, `nupc_service_background()` from an idle context.
 
 ## Debugging
 Open SHARC+ toolchain (WSL `~/git/sharc-plus-toolchain`): `lldb-dap` + patched OpenOCD + ICE-1000. It debugs

@@ -23,7 +23,7 @@ if(NOT CMAKE_BUILD_TYPE)
     set(CMAKE_BUILD_TYPE Debug CACHE STRING "Debug or Release" FORCE)
 endif()
 
-project(SAM-Audio-Starter LANGUAGES C ASM)
+project(SAM-Audio-Starter LANGUAGES C CXX ASM)
 
 set(PROJECT_TAG "SAM-Audio-Starter")
 set(PROC        "${SAM_PROC}")
@@ -37,7 +37,7 @@ set(SAM_ARM_OPTIMIZE_RELEASE   "-O1" CACHE STRING "ARM optimisation flags, Relea
 set(SAM_SHARC_OPTIMIZE_RELEASE "-O1 -Ov100 -Oa" CACHE STRING "SHARC optimisation flags, Release")
 option(SAM_RELEASE_DEBUG_INFO "Keep -g in Release builds" OFF)
 
-foreach(_lang C ASM)
+foreach(_lang C CXX ASM)
     set(CMAKE_${_lang}_FLAGS_DEBUG   "-g ${SAM_ARM_OPTIMIZE_DEBUG}")
     set(CMAKE_${_lang}_FLAGS_RELEASE "${SAM_ARM_OPTIMIZE_RELEASE}")
     if(SAM_RELEASE_DEBUG_INFO)
@@ -96,6 +96,13 @@ set(ARM_SRC_DIRS
     ARM/src/oss-services/FreeRTOS-ARM/portable/CCES/ARM_CA5
     ARM/src/oss-services/FreeRTOS-ARM/portable/GCC/ARM_CA9)
 
+# NUPC convolution engine (C++11, see docs/NUPC-THREADING-PLAN.md) and the Ne10 FFT subset it needs.
+option(SAM_NUPC "Build the NUPC convolution engine into the ARM application" ON)
+set(SAM_NUPC_ARENA_MB 16 CACHE STRING "Size of the NUPC memory arena in DDR (MB)")
+if(SAM_NUPC)
+    list(APPEND ARM_SRC_DIRS ARM/src/nupc ARM/src/oss-services/ne10)
+endif()
+
 set(ARM_EXTRA_INCLUDES
     ALL/include
     ARM/include
@@ -104,11 +111,11 @@ set(ARM_EXTRA_INCLUDES
     ARM/src/oss-services/lwip/include
     ARM/src/oss-services/FreeRTOS-ARM/include)
 
-# Same rule as the makefile: only *.c and *.S directly inside each listed directory.
+# Same rule as the makefile: only *.c and *.S directly inside each listed directory (plus *.cpp, used by NUPC/Ne10).
 set(ARM_SOURCES "")
 foreach(_dir ${ARM_SRC_DIRS})
     file(GLOB _found CONFIGURE_DEPENDS
-        "${SAM_ROOT}/${_dir}/*.c" "${SAM_ROOT}/${_dir}/*.S")
+        "${SAM_ROOT}/${_dir}/*.c" "${SAM_ROOT}/${_dir}/*.S" "${SAM_ROOT}/${_dir}/*.cpp")
     list(APPEND ARM_SOURCES ${_found})
 endforeach()
 
@@ -134,7 +141,28 @@ target_compile_options(sam_arm PRIVATE
     -gdwarf-2 -ffunction-sections -fdata-sections
     -madi-threads)
 
-set(ARM_LD_SCRIPT "${SAM_ASSETS}/ARM-${PROJECT_TAG}.ld")
+if(SAM_NUPC)
+    # BUFFER_SIZE_SAMPLES must equal SYSTEM_BLOCK_SIZE (ARM/src/context.h).
+    # NE10_* select the NEON-intrinsics float32 FFT; NE10_DSP_RFFT_SCALING makes c2r apply 1/N, which
+    # nupc/Convolution.h relies on. NE10_USE_NUPC_ARENA routes Ne10's allocations to the NUPC arena.
+    math(EXPR _arena_bytes "${SAM_NUPC_ARENA_MB} * 1024 * 1024")
+    target_compile_definitions(sam_arm PRIVATE
+        SAM_NUPC NUPC_BARE_METAL BUFFER_SIZE_SAMPLES=64 NUPC_ARENA_BYTES=${_arena_bytes}u
+        NE10_ENABLE_DSP NE10_UNROLL_LEVEL=1 NE10_DSP_RFFT_SCALING NE10_USE_NUPC_ARENA)
+    # No exceptions/RTTI/thread-safe statics: bare-metal C++ without OS support code.
+    target_compile_options(sam_arm PRIVATE
+        $<$<COMPILE_LANGUAGE:CXX>:-std=gnu++11>
+        $<$<COMPILE_LANGUAGE:CXX>:-fno-exceptions>
+        $<$<COMPILE_LANGUAGE:CXX>:-fno-rtti>
+        $<$<COMPILE_LANGUAGE:CXX>:-fno-threadsafe-statics>)
+endif()
+
+if(SAM_NUPC)
+    # Same script, but the 16 KB supervisor/interrupt stack lives in DDR (L2 is full).
+    set(ARM_LD_SCRIPT "${SAM_ASSETS}/ARM-${PROJECT_TAG}-nupc.ld")
+else()
+    set(ARM_LD_SCRIPT "${SAM_ASSETS}/ARM-${PROJECT_TAG}.ld")
+endif()
 set(ARM_STATIC_LIB "${SAM_ROOT}/ARM/lib/cld_sc58x_audio_2_0_w_cdc_lib_Core0.a")
 set_property(TARGET sam_arm APPEND PROPERTY LINK_DEPENDS "${ARM_LD_SCRIPT}" "${ARM_STATIC_LIB}")
 

@@ -29,6 +29,9 @@
 #include "sharc_audio.h"
 #include "route.h"
 #include "gpio_pins.h"
+#ifdef SAM_NUPC
+#include "nupc_glue.h"
+#endif
 
 static STREAM_INFO STREAMS[STREAM_ID_MAX];
 
@@ -328,6 +331,16 @@ void processAudio(APP_CONTEXT *context, unsigned mask, STREAM_ID streamID,
      */
     ready = clock_domain_ready(context, cd);
     if (ready) {
+#ifdef SAM_NUPC
+        /* NUPC convolution (mono): processes codec-in channel 0 in place before the routing table sends it on. */
+        {
+            STREAM_INFO *nupcIn = &STREAMS[STREAM_ID_CODEC_IN];
+            if ((nupcIn->streamID != STREAM_ID_UNKNOWN) && (nupcIn->clockDomain == cd) &&
+                (nupcIn->data != NULL) && (nupcIn->wordSize == sizeof(int32_t))) {
+                nupc_process_s32((int32_t *)nupcIn->data, nupcIn->numChannels, nupcIn->numFrames, 0);
+            }
+        }
+#endif
 #ifdef SHARC_AUDIO_ENABLE
         SAE_CONTEXT *sae = context->saeContext;
         SAE_MSG_BUFFER *msg;

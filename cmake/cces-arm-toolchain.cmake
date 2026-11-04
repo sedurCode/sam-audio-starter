@@ -23,6 +23,7 @@ if(CCES_ROOT)
 endif()
 
 find_program(CMAKE_C_COMPILER   arm-none-eabi-gcc ${_hint} REQUIRED)
+find_program(CMAKE_CXX_COMPILER arm-none-eabi-g++ ${_hint} REQUIRED)
 find_program(CMAKE_ASM_COMPILER arm-none-eabi-gcc ${_hint} REQUIRED)
 find_program(CMAKE_AR           arm-none-eabi-ar  ${_hint})
 find_program(CMAKE_OBJCOPY      arm-none-eabi-objcopy ${_hint})
@@ -32,6 +33,7 @@ set(SAM_PROC "ADSP-SC589" CACHE STRING "ADI processor passed to -mproc")
 set(SAM_SI_REVISION "1.0" CACHE STRING "Silicon revision passed to -msi-revision")
 set(_proc_flags "-mproc=${SAM_PROC} -msi-revision=${SAM_SI_REVISION}")
 set(CMAKE_C_FLAGS_INIT   "${_proc_flags}")
+set(CMAKE_CXX_FLAGS_INIT "${_proc_flags}")
 set(CMAKE_ASM_FLAGS_INIT "${_proc_flags}")
 
 # The compiler check only needs to produce an object file (no linker script yet).
