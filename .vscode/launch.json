@@ -564,6 +564,16 @@
       ],
       "preLaunchTask": "SHARC+: prepare SC589 A5 + cores 1 + 2",
       "stopAll": true
+    },
+    {
+      "name": "SC589 A5 + SHARC+ cores 1 + 2 (ICE-1000, attach: no load)",
+      "configurations": [
+        "Cortex-A5 SC589 (compound attach)",
+        "SHARC+ SC589 core 1 (compound attach)",
+        "SHARC+ SC589 core 2 (compound attach)"
+      ],
+      "preLaunchTask": "SHARC+: prepare SC589 A5 + cores 1 + 2 (attach, no load)",
+      "stopAll": true
     }
   ]
 }

@@ -40,10 +40,8 @@ typedef enum _GPIO_PIN_ID {
     GPIO_PIN_A2B_IO7,
     GPIO_PIN_1761_ADDR1,
     GPIO_PIN_ETH0_RESET,
-#if 0
-    GPIO_PIN_DEBUG_0,
-    GPIO_PIN_DEBUG_1,
-#endif
+    GPIO_PIN_DEBUG_0,   /* SIGMA pin 5: NUPC foreground (audio callback) */
+    GPIO_PIN_DEBUG_1,   /* SIGMA pin 7: NUPC background task step */
     GPIO_PIN_MAX
 } GPIO_PIN_ID;
 

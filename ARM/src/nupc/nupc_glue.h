@@ -37,7 +37,7 @@ typedef struct {
     uint32_t backgroundSteps, foregroundSteps, stolenSteps, misses, restarts, maxQueued;
 } NUPC_STATS;
 
-/* Fills a config with the harness defaults (1 s of IR, 64-sample head, 4096 max partition, background tier on). */
+/* Fills a config with the harness defaults (1 s of IR, 32-sample head, 4096 max partition, background tier on). */
 void nupc_default_config(NUPC_CONFIG *cfg);
 
 /* Returns 0 on success, negative on failure (bad config, arena too small). */

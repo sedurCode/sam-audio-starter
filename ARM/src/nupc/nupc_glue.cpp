@@ -10,6 +10,27 @@
 #include <math.h>
 #include "NeuralNonUniformPartitionedConvolution.h"
 
+// Scope probes for measuring NUPC CPU usage. A pin is high while that context is running NUPC work:
+//   DEBUG_0 (SIGMA pin 5) = foreground: nupc_process_s32() on the audio callback (ISR)
+//   DEBUG_1 (SIGMA pin 7) = background: one nupc_service_background() call (FreeRTOS task, preempted by DEBUG_0's ISR)
+// Duty cycle = CPU share; DEBUG_0 high time vs. the 667 us block period is the foreground load.
+// Build with -DNUPC_GPIO_PROBES=0 to remove them.
+#ifndef NUPC_GPIO_PROBES
+#define NUPC_GPIO_PROBES 1
+#endif
+#if NUPC_GPIO_PROBES
+#include <stdint.h>
+#include <stdbool.h>
+extern "C" {
+#include "gpio_pins.h"
+}
+#define NUPC_PROBE_HI(id) adi_gpio_Set(gpioPins[id].port, gpioPins[id].pinNum)
+#define NUPC_PROBE_LO(id) adi_gpio_Clear(gpioPins[id].port, gpioPins[id].pinNum)
+#else
+#define NUPC_PROBE_HI(id) ((void)0)
+#define NUPC_PROBE_LO(id) ((void)0)
+#endif
+
 extern "C" ne10_result_t ne10_bm_init(void); // ARM/src/oss-services/ne10/ne10_bm_init.c
 
 namespace {
@@ -94,6 +115,7 @@ void nupc_process_s32(int32_t* interleaved, unsigned numChannels, unsigned numFr
     if (!g_enabled || e == 0 || numFrames != BUFFER_SIZE_SAMPLES || channel >= numChannels)
         return;
 
+    NUPC_PROBE_HI(GPIO_PIN_DEBUG_0);
     const uint32_t t0 = nupc_read_cycles();
 
     const float toFloat = 1.0f / 2147483648.0f;
@@ -113,6 +135,7 @@ void nupc_process_s32(int32_t* interleaved, unsigned numChannels, unsigned numFr
     }
 
     const uint32_t dt = nupc_read_cycles() - t0;
+    NUPC_PROBE_LO(GPIO_PIN_DEBUG_0);
     g_cyclesLast = dt;
     if (dt > g_cyclesMax) g_cyclesMax = dt;
     if (dt > g_budgetCycles) ++g_overBudget;
@@ -123,7 +146,12 @@ void nupc_process_s32(int32_t* interleaved, unsigned numChannels, unsigned numFr
 unsigned nupc_service_background(unsigned maxSteps)
 {
     NupcConvolver* const e = g_engine;
-    return (g_enabled && e) ? e->serviceBackground(maxSteps) : 0;
+    if (!g_enabled || !e || e->backgroundIdle())
+        return 0;   // nothing queued: don't pulse the probe
+    NUPC_PROBE_HI(GPIO_PIN_DEBUG_1);
+    const unsigned ran = e->serviceBackground(maxSteps);
+    NUPC_PROBE_LO(GPIO_PIN_DEBUG_1);
+    return ran;
 }
 
 bool nupc_background_idle(void)

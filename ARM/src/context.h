@@ -54,7 +54,7 @@
  */
 #define SYSTEM_MCLK_RATE               (24576000)
 #define SYSTEM_SAMPLE_RATE             (48000)
-#define SYSTEM_BLOCK_SIZE              (64)
+#define SYSTEM_BLOCK_SIZE              (32)
 #define SYSTEM_AUDIO_TYPE              int32_t
 #define SYSTEM_MAX_CHANNELS            (32)
 #define WAV_MAX_CHANNELS               (64)

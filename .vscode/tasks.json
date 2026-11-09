@@ -10,7 +10,7 @@
         "--probe",
         "ice1000",
         "--board",
-        "adspsc589_ezbrd"
+        "adspsc589_minibrd"
       ],
       "isBackground": true,
       "problemMatcher": {
@@ -580,6 +580,17 @@
         "SHARC+: begin compound cores 1 + 2"
       ],
       "dependsOrder": "sequence",
+      "problemMatcher": []
+    },
+    {
+      "label": "SHARC+: prepare SC589 A5 + cores 1 + 2 (attach, no load)",
+      "dependsOrder": "sequence",
+      "dependsOn": [
+        "SHARC+: abort stale compound",
+        "SHARC+: validate Cortex-A5 symbols",
+        "SHARC+: start OpenOCD SC589",
+        "SHARC+: begin compound A5 + cores 1 + 2"
+      ],
       "problemMatcher": []
     }
   ],

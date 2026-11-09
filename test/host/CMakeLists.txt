@@ -10,7 +10,7 @@ add_executable(test_nupc test_nupc.cpp
     ${NUPC_DIR}/BareMetalTaskScheduler.cpp
     ${NUPC_DIR}/NeuralNonUniformPartitionedConvolution.cpp)
 target_include_directories(test_nupc PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/shim ${NUPC_DIR})
-target_compile_definitions(test_nupc PRIVATE NUPC_BARE_METAL BUFFER_SIZE_SAMPLES=64)
+target_compile_definitions(test_nupc PRIVATE NUPC_BARE_METAL BUFFER_SIZE_SAMPLES=32)
 target_compile_features(test_nupc PRIVATE cxx_std_11)
 target_compile_options(test_nupc PRIVATE -Wall -Wextra -Wno-unused-parameter)
 find_package(Threads REQUIRED)

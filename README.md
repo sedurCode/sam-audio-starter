@@ -22,7 +22,7 @@ makefile build in `build/` still works.
 ## NUPC convolution
 The convolution engine (`ARM/src/nupc/`, FFT: vendored Ne10 in `ARM/src/oss-services/ne10/`) is built into the ARM
 application by default (CMake option `SAM_NUPC`, arena size `SAM_NUPC_ARENA_MB`). It processes **codec input channel 0**
-(mono, 64-sample blocks, 48 kHz) in `processAudio()` before the routing table, with the embedded 10 s York Minster IR
+(mono, 32-sample blocks, 48 kHz) in `processAudio()` before the routing table, with the embedded 10 s York Minster IR
 (1 s used by default). It is prepared at boot but **disabled**; from the shell (USB CDC / UART):
 
 ```

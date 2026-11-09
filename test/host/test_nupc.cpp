@@ -19,7 +19,7 @@
 #include <vector>
 
 static const std::size_t kIrLength = 8192;
-static const std::size_t kSamples = 64 * 400;   // 25600 samples, 400 callbacks
+static const std::size_t kSamples = 32 * 800;   // 25600 samples, 800 callbacks
 
 struct Result { double maxErr; neural::arm::detail::BareMetalTaskScheduler::Counters c; };
 
@@ -46,7 +46,7 @@ static std::vector<double> directConv(const std::vector<float>& ir, const std::v
 
 enum Mode { kAudio, kBmSteal, kBmInline, kBmThread };
 
-// Callback pacing for bm-thread in microseconds (real time at 48 kHz/64 samples is 1333). NUPC_PACE_US overrides.
+// Callback pacing for bm-thread in microseconds (real time at 48 kHz/32 samples is 667). NUPC_PACE_US overrides.
 static unsigned paceUs() { const char* e = std::getenv("NUPC_PACE_US"); return e ? static_cast<unsigned>(std::atoi(e)) : 160u; }
 
 static Result run(Mode mode, const std::vector<float>& in, const std::vector<double>& ref)

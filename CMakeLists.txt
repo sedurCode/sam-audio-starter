@@ -147,7 +147,7 @@ if(SAM_NUPC)
     # nupc/Convolution.h relies on. NE10_USE_NUPC_ARENA routes Ne10's allocations to the NUPC arena.
     math(EXPR _arena_bytes "${SAM_NUPC_ARENA_MB} * 1024 * 1024")
     target_compile_definitions(sam_arm PRIVATE
-        SAM_NUPC NUPC_BARE_METAL BUFFER_SIZE_SAMPLES=64 NUPC_ARENA_BYTES=${_arena_bytes}u
+        SAM_NUPC NUPC_BARE_METAL BUFFER_SIZE_SAMPLES=32 NUPC_ARENA_BYTES=${_arena_bytes}u
         NE10_ENABLE_DSP NE10_UNROLL_LEVEL=1 NE10_DSP_RFFT_SCALING NE10_USE_NUPC_ARENA)
     # No exceptions/RTTI/thread-safe statics: bare-metal C++ without OS support code.
     target_compile_options(sam_arm PRIVATE
